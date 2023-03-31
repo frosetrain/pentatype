@@ -23,25 +23,31 @@ let gray = {
     },
 };
 
-let controlChars = [8, 46, 13, 9, 27, 16, 17, 18, 38, 40, 37, 39];
+let currentChar = 0;
 let typed = "";
-let quote = "Lorem Ipsum";
+let quote = "I'd just like to interject for a moment.";
 let quoteBox;
 let typedBox;
+let errorBox;
+let theme;
 
 function setup() {
     removeElements();
     createCanvas(windowWidth, windowHeight - 60);
+    newTheme = localStorage.theme;
+    background(gray[newTheme]["bg"]);
+    theme = newTheme;
     quoteBox = createElement("p", quote);
-    quoteBox.id("quoteBox");
     quoteBox.class("text-xl font-mono text-gray-400 dark:text-gray-600");
-    quoteBox.position(30, height / 2 + 60);
+    quoteBox.position(30, height / 2 + 46);
     typedBox = createElement("p", typed);
-    typedBox.id("typedBox");
     typedBox.class(
         "text-xl font-mono text-gray-900 dark:text-gray-100 bg-gray-100 dark:bg-gray-900"
     );
-    typedBox.position(30, height / 2 + 60);
+    typedBox.position(30, height / 2 + 46);
+    errorBox = createElement("p", "");
+    errorBox.class("text-xl font-mono text-red-700 dark:text-red-500");
+    errorBox.position(30, height / 2 + 46);
 }
 
 function windowResized() {
@@ -50,19 +56,75 @@ function windowResized() {
 
 function keyTyped() {
     typed += key;
-    document.getElementById("typedBox").innerHTML = typed;
+    if (typed != quote.substring(0, currentChar + 1)) {
+        let firstError;
+        for (let i = 0; i < typed.length; i++) {
+            if (typed[i] != quote[i]) {
+                firstError = i;
+                break;
+            }
+        }
+        errorBox.html(
+            "<pre>" +
+                " ".repeat(firstError) +
+                typed
+                    .substring(firstError, currentChar + 1)
+                    .replaceAll(" ", "_") +
+                "</pre>"
+        );
+        typedBox.html(
+            "<pre>" +
+                typed.substring(0, firstError) +
+                " ".repeat(currentChar - firstError + 1) +
+                "</pre>"
+        );
+    } else {
+        typedBox.html("<pre>" + typed + "</pre>");
+    }
+    currentChar++;
 }
 
 function keyPressed() {
-    if (keyCode == BACKSPACE) {
+    if (keyCode == BACKSPACE && currentChar > 0) {
         typed = typed.substring(0, typed.length - 1);
-        document.getElementById("typedBox").innerHTML = typed;
+        currentChar--;
+        if (typed != quote.substring(0, currentChar)) {
+            let firstError;
+            for (let i = 0; i < typed.length; i++) {
+                if (typed[i] != quote[i]) {
+                    firstError = i;
+                    break;
+                }
+            }
+            errorBox.html(
+                "<pre>" +
+                    " ".repeat(firstError) +
+                    typed
+                        .substring(firstError, currentChar)
+                        .replaceAll(" ", "_") +
+                    "</pre>"
+            );
+            typedBox.html(
+                "<pre>" +
+                    typed.substring(0, firstError) +
+                    " ".repeat(currentChar - firstError) +
+                    "</pre>"
+            );
+        } else {
+            errorBox.html("");
+            typedBox.html("<pre>" + typed + "</pre>");
+        }
     }
 }
 
 function draw() {
-    theme = localStorage.theme;
-    background(gray[theme]["bg"]);
-    noStroke();
-    // text(typed, 30, height / 2);
+    // fill("black");
+    // rect(100, 90, 10, 10);
+    // fill("white");
+    // text(currentChar, 100, 100);
+    newTheme = localStorage.theme;
+    if (theme != newTheme) {
+        background(gray[newTheme]["bg"]);
+        theme = newTheme;
+    }
 }
