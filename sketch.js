@@ -57,7 +57,8 @@ function showTyping() {
         }
     }
     currentLineBox.html(
-        "<span class='text-gray-900 dark:text-gray-100'>" +
+        "<span class=text-blue-500>> </span>" +
+            "<span class='text-gray-900 dark:text-gray-100'>" +
             typed.substring(0, firstError) + // white
             "</span><span class='text-red-500'>" +
             typed.substring(firstError, currentChar) + // red
@@ -79,13 +80,20 @@ function setup() {
     newTheme = localStorage.theme;
     background(gray[newTheme]["bg"]);
     theme = newTheme;
+    bigDiv = createDiv();
+    bigDiv.class("flex w-screen items-center justify-center");
+    bigDiv.style("height", windowHeight - 60 + "px");
+    bigDiv.position(0, 60);
     typingDiv = createDiv();
-    typingDiv.class("m-5");
-    typingDiv.position(0, 60);
-    currentLineBox = createElement("p", currentLine);
+    typingDiv.parent(bigDiv);
+    typingDiv.class("m-4 text-center");
+    currentLineBox = createElement(
+        "p",
+        "<span class=text-blue-500>> </span>" + currentLine
+    );
     currentLineBox.parent(typingDiv);
     currentLineBox.class(
-        "p-2 my-2 rounded text-xl font-mono text-gray-500 dark:text-gray-500 bg-gray-200 dark:bg-gray-800"
+        "p-2 my-2 rounded text-xl font-mono text-gray-400 dark:text-gray-500 bg-gray-200 dark:bg-gray-800"
     );
     // currentLineBox.position(0, 60);
     otherLinesBox = createElement("p", otherLines);
@@ -103,7 +111,6 @@ function windowResized() {
 function keyTyped() {
     if (currentChar == 0 && lineId == 0) {
         timeStart = Date.now();
-        console.log("start");
     }
     typed += key;
     currentChar++;
@@ -118,14 +125,14 @@ function keyTyped() {
         typed = "";
         currentChar = 0;
         indexOfNewline = otherLines.indexOf("\n");
-        console.log(indexOfNewline);
         if (indexOfNewline == -1) {
             otherLines = "";
         } else {
             otherLines = otherLines.substring(otherLines.indexOf("\n") + 1);
         }
-        console.log(otherLines);
-        currentLineBox.html(currentLine);
+        currentLineBox.html(
+            "<span class=text-blue-500>> </span>" + currentLine
+        );
         otherLinesBox.html(otherLines);
     }
 }

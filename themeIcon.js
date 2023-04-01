@@ -1,3 +1,5 @@
+console.log("apply icon")
+
 if (localStorage.theme === "dark") {
     document.documentElement.classList.add("dark");
     document.getElementById("themeButton").innerHTML =
