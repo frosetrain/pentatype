@@ -3,9 +3,9 @@
 @tailwind utilities;
 @font-face {
     font-family: Inter;
-    src: url(/Inter-Regular.ttf);
+    src: url(/Inter-Regular.woff2);
 }
 @font-face {
-    font-family: IBM Plex Mono;
-    src: url(/IBMPlexMono-Regular.ttf);
+    font-family: Roboto Mono;
+    src: url(/RobotoMono-Regular.ttf);
 }
