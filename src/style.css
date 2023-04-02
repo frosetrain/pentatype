@@ -3,9 +3,9 @@
 @tailwind utilities;
 @font-face {
     font-family: Inter;
-    src: url(./assets/Inter-Regular.woff2);
+    src: url(../assets/Inter-Regular.woff2);
 }
 @font-face {
     font-family: Roboto Mono;
-    src: url(./assets/RobotoMono-Regular.ttf);
+    src: url(../assets/RobotoMono-Regular.ttf);
 }

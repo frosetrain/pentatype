@@ -23,30 +23,25 @@ let gray = {
     },
 };
 
-let currentChar = 0;
-let typed = "";
-let quote = `Shall I compare thee to a summer's day?
-Thou art more lovely and more temperate:
-Rough winds do shake the darling buds of May,
-And summer's lease hath all too short a date:
-Sometime too hot the eye of heaven shines,
-And often is his gold complexion dimm'd;
-And every fair from fair sometime declines,
-By chance or nature's changing course untrimm'd;
-But thy eternal summer shall not fade
-Nor lose possession of that fair thou owest;
-Nor shall Death brag thou wander'st in his shade,
-When in eternal lines to time thou growest:
-So long as men can breathe or eyes can see,
-So long lives this and this gives life to thee.`;
-let lines = quote.split("\n");
-let quoteLength = lines.length;
-let lineId = 0;
-let currentLine = lines[0];
-let otherLines = quote.substring(quote.indexOf("\n") + 1);
+let currentLine;
+let currentChar;
+let typed;
+let quote;
+let otherLines;
+let lines;
+let quoteLength;
+let lineId;
 let otherLinesBox;
 let theme;
 let timeStart;
+
+function getRandomQuote() {
+    $.getJSON("src/quotes.json", function (json) {
+        console.log(json);
+    });
+    // return json[Math.floor(Math.random() * 10)];
+}
+console.log(getRandomQuote());
 
 function showTyping() {
     let firstError = currentChar;
@@ -75,6 +70,17 @@ function success(timeTaken) {
 }
 
 function setup() {
+    lineId = 0;
+    currentChar = 0;
+    typed = "";
+    quote = "hmm\nyes\nshake\n";
+    otherLines = quote.substring(quote.indexOf("\n") + 1);
+    if (quote[quote.length - 1] == "\n") {
+        quote = quote.substring(0, quote.length - 1);
+    }
+    lines = quote.split("\n");
+    currentLine = lines[0];
+    quoteLength = lines.length;
     removeElements();
     createCanvas(windowWidth, windowHeight - 60);
     newTheme = localStorage.theme;
