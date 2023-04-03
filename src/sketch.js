@@ -34,6 +34,7 @@ let currentLine;
 let currentChar;
 let typed;
 let quote;
+let source;
 let otherLines;
 let lines;
 let quoteLength;
@@ -46,18 +47,7 @@ function getRandomQuote() {
     return collection[Math.floor(Math.random() * 56)];
 }
 
-function setup() {
-    lineId = 0;
-    currentChar = 0;
-    typed = "";
-    quote = getRandomQuote()["quote"];
-    otherLines = quote.substring(quote.indexOf("\n") + 1);
-    if (quote[quote.length - 1] == "\n") {
-        quote = quote.substring(0, quote.length - 1);
-    }
-    lines = quote.split("\n");
-    currentLine = lines[0];
-    quoteLength = lines.length;
+function drawUI() {
     removeElements();
     createCanvas(windowWidth, windowHeight - 60);
     newTheme = localStorage.theme;
@@ -69,23 +59,46 @@ function setup() {
     bigDiv.position(0, 60);
     typingDiv = createDiv();
     typingDiv.parent(bigDiv);
-    typingDiv.class("m-4 text-center");
+    typingDiv.class("m-8");
     currentLineBox = createElement(
         "p",
         "<span class=text-blue-500>> </span>" + currentLine
     );
     currentLineBox.parent(typingDiv);
     currentLineBox.class(
-        "p-2 my-2 rounded text-xl font-mono text-gray-400 dark:text-gray-500 bg-gray-200 dark:bg-gray-800"
+        "p-2 my-2 rounded text-center text-xl font-mono text-gray-400 dark:text-gray-500 bg-gray-200 dark:bg-gray-800"
     );
-    // currentLineBox.position(0, 60);
     otherLinesBox = createElement("p", otherLines);
     otherLinesBox.parent(typingDiv);
     otherLinesBox.class(
-        "whitespace-pre-line my-2 text-md font-mono text-gray-400 dark:text-gray-600"
+        "whitespace-pre-line my-2 text-center text-md font-mono text-gray-400 dark:text-gray-600"
     );
-    // otherLinesBox.position(0, 120);
+    sourceBox = createElement("p", "- " + source);
+    sourceBox.parent(typingDiv);
+    sourceBox.class("py-4 text-right italic text-gray-500");
 }
+
+function setup() {
+    lineId = 0;
+    currentChar = 0;
+    typed = "";
+    let got = getRandomQuote();
+    quote = got["quote"];
+    source = got["source"];
+    otherLines = quote.substring(quote.indexOf("\n") + 1);
+    if (quote[quote.length - 1] == "\n") {
+        quote = quote.substring(0, quote.length - 1);
+    }
+    lines = quote.split("\n");
+    currentLine = lines[0];
+    quoteLength = lines.length;
+    drawUI();
+}
+
+function windowResized() {
+    drawUI();
+}
+
 function showTyping() {
     let firstError = currentChar;
     for (let i = 0; i < typed.length; i++) {
@@ -110,10 +123,6 @@ function success(timeTaken) {
     let wpm = ((quote.length / timeTaken) * 60000) / 5;
     fill(gray[theme]["fg"]);
     text(`Congratulations, ${round(wpm)} wpm`, 100, 100);
-}
-
-function windowResized() {
-    setup();
 }
 
 function keyTyped() {
@@ -150,6 +159,9 @@ function keyPressed() {
         typed = typed.substring(0, typed.length - 1);
         currentChar--;
         showTyping();
+    }
+    if (keyCode == CONTROL) {
+        setup()
     }
 }
 
