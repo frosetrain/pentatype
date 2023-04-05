@@ -61,17 +61,22 @@ function getRandomQuote(category) {
     ];
 }
 
-function drawUI() {
+function landingPage() {
     removeElements();
-    // This canvas should hopefully become obsolete once I switch to completely DOM elements
     createCanvas(windowWidth, windowHeight - 60);
-    newTheme = localStorage.theme;
-    // background(gray[newTheme]["bg"]);
-    theme = newTheme;
     bigDiv = createDiv();
-    bigDiv.class("flex w-screen items-center justify-center overflow-hidden");
+    bigDiv.class("flex flex-col w-screen items-center justify-center overflow-hidden");
     bigDiv.style("height", windowHeight - 60 + "px");
     bigDiv.position(0, 60);
+    selectionDiv = createDiv();
+    selectionDiv.class("bg-red-500")
+    selectionDiv.parent(bigDiv)
+    selectButton = createButton("hee")
+    selectButton.class("m-4")
+    selectButton.parent(selectionDiv)
+    selectButton2 = createButton("hee")
+    selectButton2.class("m-4")
+    selectButton2.parent(selectionDiv)
     typingDiv = createDiv();
     typingDiv.parent(bigDiv);
     typingDiv.class("m-8 ");
@@ -83,7 +88,7 @@ function drawUI() {
     currentLineBox.class(
         "p-2 my-2 rounded text-center text-xl font-mono text-gray-400 dark:text-gray-500 bg-gray-200 dark:bg-gray-800"
     );
-    otherLinesBox = createElement("p", otherLines);
+    otherLinesBox = createElement("p");
     otherLinesBox.parent(typingDiv);
     otherLinesBox.class(
         "whitespace-pre-line my-2 text-center text-md font-mono text-gray-400 dark:text-gray-600"
@@ -93,11 +98,15 @@ function drawUI() {
     sourceBox.class("py-4 text-right italic text-gray-500");
 }
 
+function startTyping() {
+    otherLinesBox.html(otherLines);
+}
+
 function setup() {
     lineId = 0;
     currentChar = 0;
     typed = "";
-    let got = getRandomQuote(3);
+    let got = getRandomQuote(0);
     quote = got["quote"];
     source = got["source"];
     otherLines = quote.substring(quote.indexOf("\n") + 1);
@@ -109,7 +118,7 @@ function setup() {
     quoteLength = lines.length;
     isTyping = false;
     isDone = false;
-    drawUI();
+    landingPage();
 }
 
 function windowResized() {
@@ -148,6 +157,7 @@ function keyTyped() {
     if (currentChar == 0 && lineId == 0) {
         isTyping = true;
         timeStart = Date.now();
+        startTyping();
     }
     typed += key;
     currentChar++;
@@ -193,7 +203,7 @@ function draw() {
     // text(currentChar, 100, 100);
     newTheme = localStorage.theme;
     if (theme != newTheme) {
-        background(gray[newTheme]["bg"]);
+        // background(gray[newTheme]["bg"]);
         theme = newTheme;
     }
 }

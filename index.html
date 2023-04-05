@@ -11,13 +11,73 @@
         <title>Pentatype</title>
     </head>
     <body class="min-h-screen bg-gray-100 dark:bg-gray-900">
-        <div class="bg-gray-200 dark:bg-gray-800">
-            <button
-                class="m-3 rounded-full p-2 hover:bg-gray-300 dark:hover:bg-gray-700"
-                id="themeButton"
-                onclick="switchTheme()"
-            ></button>
+        <div
+            class="flex justify-between items-center bg-gray-200 dark:bg-gray-800 h-[60px]"
+        >
+            <p class="font-bold text-lg p-4 text-gray-900 dark:text-gray-100">
+                Pentatype
+            </p>
+            <div class="flex">
+                <a
+                    href="https://github.com/frosetrain/pentatype"
+                    target="_blank"
+                    class="bg-blue-300 hover:bg-blue-400 dark:bg-blue-800 hover:dark:bg-blue-700 text-gray-900 dark:text-gray-100 rounded px-2 py-1 m-auto"
+                >
+                    Source Code
+                </a>
+                <button
+                    class="m-3 rounded-full p-2 hover:bg-gray-300 dark:hover:bg-gray-700"
+                    id="themeButton"
+                    onclick="switchTheme()"
+                ></button>
+            </div>
         </div>
+        <div
+            class="m-4 flex justify-center rounded bg-slate-200 p-2 dark:bg-slate-800"
+        >
+            <div class="mx-4 flex" id="select">
+                <p class="px-2">Lines</p>
+                <button
+                    class="mx-0.5 rounded bg-slate-300 px-2 hover:bg-blue-300 dark:bg-slate-700"
+                >
+                    1
+                </button>
+                <button
+                    class="mx-0.5 rounded bg-slate-300 px-2 hover:bg-blue-300 dark:bg-slate-700"
+                >
+                    2
+                </button>
+                <button
+                    class="mx-0.5 rounded bg-slate-300 px-2 hover:bg-blue-300 dark:bg-slate-700"
+                >
+                    3-8
+                </button>
+                <button
+                    class="mx-0.5 rounded bg-slate-300 px-2 hover:bg-blue-300 dark:bg-slate-700"
+                >
+                    9+
+                </button>
+            </div>
+            <div class="mx-4 flex" id="select">
+                <p class="px-2">Time</p>
+                <button
+                    class="mx-0.5 rounded bg-slate-300 dark:bg-slate-700 px-2 hover:bg-blue-300"
+                >
+                    10s
+                </button>
+                <button
+                    class="mx-0.5 rounded bg-slate-300 dark:bg-slate-700 px-2 hover:bg-blue-300"
+                >
+                    30s
+                </button>
+                <button
+                    class="mx-0.5 rounded bg-slate-300 dark:bg-slate-700 px-2 hover:bg-blue-300"
+                >
+                    60s
+                </button>
+            </div>
+        </div>
+
         <script src="./src/themeIcon.js"></script>
         <script src="./src/sketch.js"></script>
     </body>
