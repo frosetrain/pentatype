@@ -42,10 +42,14 @@ let lines;
 let quoteLength;
 let lineId;
 let otherLinesBox;
+let selectionDiv;
 let theme;
 let timeStart;
 let isTyping;
 let isDone;
+
+const lineLabels = ["1", "2", "3-8", "9+"];
+const timeLabels = ["10s", "30s", "60s"];
 
 function getRandomQuote(category) {
     /* Get a random quote from the collection.
@@ -65,21 +69,45 @@ function landingPage() {
     removeElements();
     createCanvas(windowWidth, windowHeight - 60);
     bigDiv = createDiv();
-    bigDiv.class("flex flex-col w-screen items-center justify-center overflow-hidden");
+    bigDiv.class(
+        "flex flex-col w-screen items-center justify-center overflow-hidden"
+    );
     bigDiv.style("height", windowHeight - 60 + "px");
     bigDiv.position(0, 60);
     selectionDiv = createDiv();
-    selectionDiv.class("bg-red-500")
-    selectionDiv.parent(bigDiv)
-    selectButton = createButton("hee")
-    selectButton.class("m-4")
-    selectButton.parent(selectionDiv)
-    selectButton2 = createButton("hee")
-    selectButton2.class("m-4")
-    selectButton2.parent(selectionDiv)
+    selectionDiv.class(
+        "m-4 flex justify-center rounded bg-gray-200 p-2 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+    );
+    selectionDiv.parent(bigDiv);
+    lineSelectDiv = createDiv();
+    lineSelectDiv.parent(selectionDiv);
+    lineSelectDiv.class("mx-4 flex");
+    timeSelectDiv = createDiv();
+    timeSelectDiv.parent(selectionDiv);
+    timeSelectDiv.class("mx-2 flex");
+    linesLabel = createElement("p", "Lines");
+    linesLabel.parent(lineSelectDiv);
+    linesLabel.class("px-2");
+    timesLabel = createElement("p", "Time");
+    timesLabel.parent(timeSelectDiv);
+    timesLabel.class("px-2");
+    for (let i = 0; i < 4; i++) {
+        btn = createButton(lineLabels[i]);
+        btn.parent(lineSelectDiv);
+        btn.class(
+            "mx-0.5 rounded bg-gray-300 px-2 transition duration-200 ease-in-out hover:bg-blue-300 dark:bg-gray-700 dark:hover:bg-blue-700"
+        );
+    }
+    for (let i = 0; i < 3; i++) {
+        btn = createButton(timeLabels[i]);
+        btn.parent(timeSelectDiv);
+        btn.class(
+            "mx-0.5 rounded bg-gray-300 px-2 transition duration-200 ease-in-out hover:bg-blue-300 dark:bg-gray-700 dark:hover:bg-blue-700"
+        );
+    }
     typingDiv = createDiv();
     typingDiv.parent(bigDiv);
-    typingDiv.class("m-8 ");
+    typingDiv.class("m-8");
     currentLineBox = createElement(
         "p",
         "<span class=text-blue-500>> </span>" + currentLine
@@ -88,7 +116,7 @@ function landingPage() {
     currentLineBox.class(
         "p-2 my-2 rounded text-center text-xl font-mono text-gray-400 dark:text-gray-500 bg-gray-200 dark:bg-gray-800"
     );
-    otherLinesBox = createElement("p");
+    otherLinesBox = createElement("p", "...");
     otherLinesBox.parent(typingDiv);
     otherLinesBox.class(
         "whitespace-pre-line my-2 text-center text-md font-mono text-gray-400 dark:text-gray-600"
@@ -99,6 +127,7 @@ function landingPage() {
 }
 
 function startTyping() {
+    selectionDiv.remove();
     otherLinesBox.html(otherLines);
 }
 
@@ -106,7 +135,7 @@ function setup() {
     lineId = 0;
     currentChar = 0;
     typed = "";
-    let got = getRandomQuote(0);
+    let got = getRandomQuote(1);
     quote = got["quote"];
     source = got["source"];
     otherLines = quote.substring(quote.indexOf("\n") + 1);
@@ -122,7 +151,7 @@ function setup() {
 }
 
 function windowResized() {
-    drawUI();
+    // drawUI();
 }
 
 function showTyping() {
