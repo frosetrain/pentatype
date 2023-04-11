@@ -156,14 +156,19 @@ function applyQuote() {
     quoteLength = lines.length;
 }
 
-function setup() {
+function resetVars() {
     lineId = 0;
     currentChar = 0;
     typed = "";
     isTyping = false;
     isDone = false;
+}
+
+function setup() {
+    resetVars();
     applyQuote();
     landingPage();
+    lineSetters[quoteType]();
 }
 
 function windowResized() {
@@ -240,23 +245,25 @@ function keyPressed() {
             setup();
             lineSetters[quoteType]();
         }
+        resetVars();
         selectionDiv.style("display", "flex");
         applyQuote();
         currentLineBox.html(
             "<span class=text-accent-500>> </span>" + currentLine
         );
+        otherLinesBox.html("...");
     }
 }
 
-function draw() {
-    // fill("black");
-    // rect(100, 80, 20, 20);
-    // fill("white");
-    // textSize(20);
-    // text(currentChar, 100, 100);
-    newTheme = localStorage.theme;
-    if (theme != newTheme) {
-        // background(gray[newTheme]["bg"]);
-        theme = newTheme;
-    }
-}
+// function draw() {
+// fill("black");
+// rect(100, 80, 20, 20);
+// fill("white");
+// textSize(20);
+// text(currentChar, 100, 100);
+// newTheme = localStorage.theme;
+// if (theme != newTheme) {
+// background(gray[newTheme]["bg"]);
+// theme = newTheme;
+// }
+// }
