@@ -118,7 +118,7 @@ function landingPage() {
     );
     progressBar = createDiv();
     progressBar.parent(progressDiv);
-    progressBar.class("h-2.5 rounded-full bg-blue-600");
+    progressBar.class("h-2.5 rounded-full bg-accent-600");
     progressBar.style("width", "0%");
     statsDiv.hide();
 
@@ -249,7 +249,7 @@ function success(timeTaken) {
     retryButton = createButton("Reattempt");
     retryButton.parent(successDiv);
     retryButton.class(
-        "rounded bg-accent-500 my-4 p-2 transition duration-200 ease-in-out hover:bg-accent-300"
+        "rounded bg-accent-300 dark:bg-accent-700 dark:text-gray-100 text-gray-900 my-4 p-2 transition duration-200 ease-in-out hover:bg-accent-300"
     );
     retryButton.mousePressed(restart);
 }
