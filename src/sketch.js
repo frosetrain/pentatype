@@ -16,6 +16,7 @@ let source;
 let otherLines;
 let lines;
 let quoteLength;
+let hintBox;
 let lineId;
 let currentLineBox;
 let otherLinesBox;
@@ -24,12 +25,12 @@ let theme;
 let timeStart;
 let isTyping;
 let isDone;
+let keypresses;
+let previousLines;
 let quoteType = 0;
 
 const lineLabels = ["1", "2", "3-8", "9+"];
-const timeLabels = ["10s", "30s", "60s"];
 const lineSetters = [];
-const timeSetters = [no, no, no];
 
 // Creating functions in a for loop!
 // This is a bit of a javascript W
@@ -37,11 +38,6 @@ for (let i = 0; i < 4; i++) {
     const setter = function () {
         for (let j = 0; j < 4; j++) {
             otherButton = document.getElementById("lineSetter" + str(j));
-            otherButton.classList.remove("bg-accent-400", "dark:bg-accent-600");
-            otherButton.classList.add("bg-gray-300", "dark:bg-gray-700");
-        }
-        for (let j = 0; j < 3; j++) {
-            otherButton = document.getElementById("timeSetter" + str(j));
             otherButton.classList.remove("bg-accent-400", "dark:bg-accent-600");
             otherButton.classList.add("bg-gray-300", "dark:bg-gray-700");
         }
@@ -95,15 +91,9 @@ function landingPage() {
     lineSelectDiv = createDiv();
     lineSelectDiv.parent(selectionDiv);
     lineSelectDiv.class("mx-4 flex");
-    timeSelectDiv = createDiv();
-    timeSelectDiv.parent(selectionDiv);
-    timeSelectDiv.class("mx-2 flex");
     linesLabel = createElement("p", "Lines");
     linesLabel.parent(lineSelectDiv);
     linesLabel.class("px-2");
-    timesLabel = createElement("p", "Time");
-    timesLabel.parent(timeSelectDiv);
-    timesLabel.class("px-2");
     for (let i = 0; i < 4; i++) {
         btn = createButton(lineLabels[i]);
         btn.parent(lineSelectDiv);
@@ -113,20 +103,11 @@ function landingPage() {
         btn.id("lineSetter" + str(i));
         btn.mousePressed(lineSetters[i]);
     }
-    for (let i = 0; i < 3; i++) {
-        btn = createButton(timeLabels[i]);
-        btn.parent(timeSelectDiv);
-        btn.class(
-            "mx-0.5 rounded bg-gray-300 px-2 transition duration-200 ease-in-out hover:bg-accent-300 dark:bg-gray-700 dark:hover:bg-accent-700"
-        );
-        btn.id("timeSetter" + str(i));
-        btn.mousePressed(timeSetters[i]);
-    }
 
     statsDiv = createDiv();
     statsDiv.parent(bigDiv);
     statsDiv.class("flex w-full px-8");
-    timeBox = createElement("p", "0");
+    timeBox = createElement("p", "0.0");
     timeBox.parent(statsDiv);
     timeBox.class("font-mono pr-4 text-gray-900 dark:text-gray-100");
     // progress bar
@@ -161,11 +142,16 @@ function landingPage() {
     sourceBox = createElement("p", "- " + source);
     sourceBox.parent(typingDiv);
     sourceBox.class("py-4 text-right italic text-gray-500");
+
+    hintBox = createElement("p", "Press Control to get a new quote");
+    hintBox.parent(bigDiv);
+    hintBox.class("text-gray-600 dark:text-gray-400 font-bold ");
 }
 
 function startTyping() {
     selectionDiv.hide();
     statsDiv.style("display", "flex");
+    hintBox.hide();
     otherLinesBox.html(otherLines);
 }
 
@@ -186,8 +172,10 @@ function resetVars() {
     lineId = 0;
     currentChar = 0;
     typed = "";
+    previousLines = 0;
     isTyping = false;
     isDone = false;
+    keypresses = 0;
 }
 
 function setup() {
@@ -224,43 +212,61 @@ function showTyping() {
 function success(timeTaken) {
     isDone = true;
     isTyping = false;
-    removeElements();
+    // removeElements();
+    selectionDiv.hide();
+    statsDiv.hide();
+    typingDiv.hide();
     let wpm = ((quote.length / timeTaken) * 60000) / 6;
-    fill("#f00");
-    text(`Congratulations, ${round(wpm)} wpm`, 100, 100);
+    let accuracy = (quote.length / keypresses) * 100;
+    successDiv = createDiv();
+    successDiv.parent(bigDiv);
+    successDiv.class("text-center");
+    finishBox = createElement("p", "Thou art finish'd");
+    finishBox.class("text-gray-900 dark:text-gray-100 font-bold text-2xl py-2");
+    finishBox.parent(successDiv);
+    wpmDiv = createDiv();
+    wpmDiv.class("flex my-2 items-center justify-center");
+    wpmDiv.parent(successDiv);
+    wpmLabel = createElement("p", "WPM");
+    wpmLabel.parent(wpmDiv);
+    wpmLabel.class("text-gray-900 dark:text-gray-100");
+    wpmBox = createElement("p", round(wpm));
+    wpmBox.parent(wpmDiv);
+    wpmBox.class(
+        "text-gray-900 dark:text-gray-100 font-mono mx-2 px-1 bg-gray-300 dark:bg-gray-700 rounded"
+    );
+    accDiv = createDiv();
+    accDiv.class("flex my-2 items-center justify-center");
+    accDiv.parent(successDiv);
+    accLabel = createElement("p", "Accuracy");
+    accLabel.parent(accDiv);
+    accLabel.class("text-gray-900 dark:text-gray-100");
+    accBox = createElement("p", round(accuracy));
+    accBox.parent(accDiv);
+    accBox.class(
+        "text-gray-900 dark:text-gray-100 font-mono mx-2 px-1 bg-gray-300 dark:bg-gray-700 rounded"
+    );
+    retryButton = createButton("Reattempt");
+    retryButton.parent(successDiv);
+    retryButton.class(
+        "rounded bg-accent-500 my-4 p-2 transition duration-200 ease-in-out hover:bg-accent-300"
+    );
+    retryButton.mousePressed(restart);
 }
 
-function keyTyped() {
-    if (currentChar == 0 && lineId == 0) {
-        isTyping = true;
-        timeStart = Date.now();
-        startTyping();
+function restart() {
+    if (isDone) {
+        setup();
+        lineSetters[quoteType]();
     }
-    typed += key;
-    currentChar++;
-    progress = (typed.length / quote.length) * 100;
-    progressBar.style("width", progress + "%");
-    showTyping();
-    if (typed == currentLine) {
-        if (lineId == quoteLength - 1) {
-            success(Date.now() - timeStart);
-        }
-        lineId++;
-        lines.shift();
-        currentLine = lines[0];
-        typed = "";
-        currentChar = 0;
-        indexOfNewline = otherLines.indexOf("\n");
-        if (indexOfNewline == -1) {
-            otherLines = "";
-        } else {
-            otherLines = otherLines.substring(otherLines.indexOf("\n") + 1);
-        }
-        currentLineBox.html(
-            "<span class=text-accent-500>> </span>" + currentLine
-        );
-        otherLinesBox.html(otherLines);
-    }
+    resetVars();
+    selectionDiv.style("display", "flex");
+    hintBox.show();
+    applyQuote();
+    currentLineBox.html("<span class=text-accent-500>> </span>" + currentLine);
+    otherLinesBox.html("...");
+    sourceBox.html(source);
+    statsDiv.hide();
 }
 
 function keyPressed() {
@@ -268,24 +274,44 @@ function keyPressed() {
         typed = typed.substring(0, typed.length - 1);
         currentChar--;
         showTyping();
-        progress = (typed.length / quote.length) * 100;
-        progressBar.style("width", progress + "%");
     }
     if (keyCode == CONTROL) {
-        if (isDone) {
-            setup();
-            lineSetters[quoteType]();
-        }
-        resetVars();
-        selectionDiv.style("display", "flex");
-        applyQuote();
-        currentLineBox.html(
-            "<span class=text-accent-500>> </span>" + currentLine
-        );
-        otherLinesBox.html("...");
-        sourceBox.html(source);
-        statsDiv.hide();
+        restart();
     }
+    if (![20, 8, 17, 46, 13, 9, 27, 16, 18, 38, 40, 37, 39].includes(keyCode)) {
+        keypresses++;
+        if (currentChar == 0 && lineId == 0) {
+            isTyping = true;
+            timeStart = Date.now();
+            startTyping();
+        }
+        typed += key;
+        currentChar++;
+        showTyping();
+        if (typed == currentLine) {
+            if (lineId == quoteLength - 1) {
+                success(Date.now() - timeStart);
+            }
+            previousLines += currentLine.length;
+            lineId++;
+            lines.shift();
+            currentLine = lines[0];
+            typed = "";
+            currentChar = 0;
+            indexOfNewline = otherLines.indexOf("\n");
+            if (indexOfNewline == -1) {
+                otherLines = "";
+            } else {
+                otherLines = otherLines.substring(otherLines.indexOf("\n") + 1);
+            }
+            currentLineBox.html(
+                "<span class=text-accent-500>> </span>" + currentLine
+            );
+            otherLinesBox.html(otherLines);
+        }
+    }
+    progress = ((typed.length + previousLines) / quote.length) * 100;
+    progressBar.style("width", progress + "%");
 }
 
 function draw() {
