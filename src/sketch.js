@@ -1,4 +1,4 @@
-/* Pentatype by Frosetrain */
+// Pentatype by Frosetrain
 
 // This line contains some Shakespeare quotes that I gathered
 // Please ignore the fact that this line is 9512 characters long
@@ -54,26 +54,22 @@ for (let i = 0; i < 4; i++) {
     lineSetters.push(setter);
 }
 
-function no() {}
-
 function getRandomQuote(category) {
     /* Get a random quote from the collection.
-    
+
     Categories are:
-    0: monostitches (1 line)
-    1: couplets (2 lines)
-    2: 3 to 8 lines
-    3: insanely long quotes (9 lines and above)
+    0 - monostitches (1 line)
+    1 - couplets (2 lines)
+    2 - 3 to 8 lines
+    3 - insanely long quotes (9 lines and above)
     */
     return collection[category][
         Math.floor(Math.random() * collection[category].length)
     ];
 }
 
-function landingPage() {
-    /* Draw a landing page.
-    quite obvious
-    */
+function drawUI() {
+    // Warning: big function
     removeElements();
     createCanvas(windowWidth, windowHeight - 60);
     bigDiv = createDiv();
@@ -82,6 +78,8 @@ function landingPage() {
     );
     bigDiv.style("height", windowHeight - 60 + "px");
     bigDiv.position(0, 60);
+
+    // SelectionDiv for the number of lines selection
     selectionDiv = createDiv();
     selectionDiv.class(
         "m-4 flex justify-center rounded bg-gray-200 p-2 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
@@ -104,13 +102,13 @@ function landingPage() {
         btn.mousePressed(lineSetters[i]);
     }
 
+    // StatsDiv for the progress bar and stopwatch (hidden until typing starts)
     statsDiv = createDiv();
     statsDiv.parent(bigDiv);
     statsDiv.class("flex w-full px-8");
     timeBox = createElement("p", "0.0");
     timeBox.parent(statsDiv);
     timeBox.class("font-mono pr-4 text-gray-900 dark:text-gray-100");
-    // progress bar
     progressDiv = createDiv();
     progressDiv.parent(statsDiv);
     progressDiv.class(
@@ -122,10 +120,10 @@ function landingPage() {
     progressBar.style("width", "0%");
     statsDiv.hide();
 
+    // TypingDiv for the actual typing
     typingDiv = createDiv();
     typingDiv.parent(bigDiv);
     typingDiv.class("m-8");
-
     currentLineBox = createElement(
         "p",
         "<span class=text-accent-500>> </span>" + currentLine
@@ -143,6 +141,9 @@ function landingPage() {
     sourceBox.parent(typingDiv);
     sourceBox.class("py-4 text-right italic text-gray-500");
 
+    // Hint for people to press Control
+    // I should write "Press Control to get a new quote" in Early Modern English
+    // but I'm not very good at it
     hintBox = createElement("p", "Press Control to get a new quote");
     hintBox.parent(bigDiv);
     hintBox.class("text-gray-600 dark:text-gray-400 font-bold ");
@@ -156,6 +157,7 @@ function startTyping() {
 }
 
 function applyQuote() {
+    // Get a new quote and apply it
     let got = getRandomQuote(quoteType);
     quote = got["quote"];
     source = got["source"];
@@ -169,6 +171,7 @@ function applyQuote() {
 }
 
 function resetVars() {
+    // I think I am making too many utility functions
     lineId = 0;
     currentChar = 0;
     typed = "";
@@ -181,16 +184,13 @@ function resetVars() {
 function setup() {
     resetVars();
     applyQuote();
-    landingPage();
+    drawUI();
     lineSetters[quoteType]();
     frameRate(10);
 }
 
-function windowResized() {
-    // drawUI();
-}
-
 function showTyping() {
+    // Display color-coded text box for typing
     let firstError = currentChar;
     for (let i = 0; i < typed.length; i++) {
         if (typed[i] != currentLine[i]) {
@@ -210,14 +210,16 @@ function showTyping() {
 }
 
 function success(timeTaken) {
+    // When the user completes the typing
     isDone = true;
     isTyping = false;
-    // removeElements();
     selectionDiv.hide();
     statsDiv.hide();
     typingDiv.hide();
     let wpm = ((quote.length / timeTaken) * 60000) / 6;
     let accuracy = (quote.length / keypresses) * 100;
+
+    // Success screen thing
     successDiv = createDiv();
     successDiv.parent(bigDiv);
     successDiv.class("text-center");
@@ -255,6 +257,7 @@ function success(timeTaken) {
 }
 
 function restart() {
+    // Restart the thing
     if (isDone) {
         setup();
         lineSetters[quoteType]();
@@ -271,6 +274,7 @@ function restart() {
 
 function keyPressed() {
     if (keyCode == BACKSPACE && currentChar > 0) {
+        // When backspace is pressed
         typed = typed.substring(0, typed.length - 1);
         currentChar--;
         showTyping();
@@ -279,6 +283,7 @@ function keyPressed() {
         restart();
     }
     if (![20, 8, 17, 46, 13, 9, 27, 16, 18, 38, 40, 37, 39].includes(keyCode)) {
+        // Checks that the key pressed is a valid key (not a special key)
         keypresses++;
         if (currentChar == 0 && lineId == 0) {
             isTyping = true;
@@ -316,16 +321,9 @@ function keyPressed() {
 
 function draw() {
     if (isTyping) {
+        // Show the typing stopwatch, to 1 decimal place
         timeBox.html(((Date.now() - timeStart) / 1000).toFixed(1));
     }
-    // fill("black");
-    // rect(100, 80, 20, 20);
-    // fill("white");
-    // textSize(20);
-    // text(currentChar, 100, 100);
-    // newTheme = localStorage.theme;
-    // if (theme != newTheme) {
-    // background(gray[newTheme]["bg"]);
-    // theme = newTheme;
-    // }
 }
+
+// This is the end of my code (yay)
